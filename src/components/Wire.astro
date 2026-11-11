@@ -1,0 +1,10 @@
+---
+// Durchhängende Leitungen zwischen zwei Masten: das wiederkehrende Gliederungselement.
+// count = 3 ergibt drei übereinander gespannte Leitungen wie oben im Kopf.
+interface Props { sag?: number; class?: string; count?: number; }
+const { sag = 26, class: cls = "", count = 1 } = Astro.props;
+const lines = Array.from({ length: count }, (_, i) => sag + i * 8);
+---
+<svg class={`wire ${cls}`} viewBox={`0 0 1000 ${60 + (count - 1) * 22}`} preserveAspectRatio="none" aria-hidden="true">
+  {lines.map((sg, i) => <path d={`M0 ${6 + i * 11} Q500 ${6 + i * 11 + sg * 2} 1000 ${6 + i * 11}`} pathLength="1" />)}
+</svg>

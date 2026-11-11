@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+.netlify/
+.DS_Store
+_pdf_alt/
+_logo_work/
+contact-sheet.jpg
+dist-preview.tgz
+dist-deploy*/
+preview-*.tgz
+public/img/press/Sensational_005.jpg
+public/img/press/Sensational_006.jpg
+public/presskit/logo/Owldom_Twilight-Zone_Logo_schwarz.png

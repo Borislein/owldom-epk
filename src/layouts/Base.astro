@@ -1,0 +1,30 @@
+---
+import "@fontsource/big-shoulders-display/500";
+import "@fontsource/big-shoulders-display/800";
+import "@fontsource/karla/400.css";
+import "@fontsource/karla/700.css";
+import "../styles/global.css";
+
+interface Props { lang: "en" | "de"; title: string; description: string; }
+const { lang, title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href={new URL("/", Astro.site)} />
+    <link rel="alternate" hreflang="de" href={new URL("/de/", Astro.site)} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL("/img/cover.jpg", Astro.site)} />
+    <meta name="theme-color" content="#161c01" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

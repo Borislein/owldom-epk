@@ -1,0 +1,259 @@
+---
+import Wire from "./Wire.astro";
+import { release, links, tracks, credits, formats, text, photos, presskit, contact, stats, ui, type Lang } from "../data/epk";
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = ui[lang];
+const legal = lang === "de" ? "/de" : "";
+// *Titel* -> kursiv, Rest escaped
+const em = (x: string) => x.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\*([^*]+)\*/g, "<em>$1</em>");
+---
+<header class="top">
+  <a class="mark" href={lang === "de" ? "/de/" : "/"}>Owldom</a>
+  <a class="lang" href={t.switchHref} hreflang={lang === "de" ? "en" : "de"}>{t.switchLabel}</a>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-wires" aria-hidden="true">
+      <Wire sag={18} class="w1" />
+      <Wire sag={30} class="w2" />
+      <Wire sag={42} class="w3" />
+    </div>
+    <div class="hero-grid">
+      <div class="hero-text">
+        <h1>
+          <span>{release.title[0]}</span>
+          <span>{release.title[1]}</span>
+        </h1>
+        {text.leadQuote.approved ? (
+        <blockquote class="lede quote">
+          <p set:html={(lang === "de" ? `„${text.leadQuote.de}“` : `“${text.leadQuote.en}”`).replace(/\n/g, "<br />")} />
+          <footer>— {text.leadQuote.by}</footer>
+        </blockquote>
+        ) : <p class="lede">{text.oneLiner[lang]}</p>}
+        <p class="facts">
+          <span>{t.digitalOut} {release.date[lang]}</span>
+          <span>{t.physicalOut} {release.physicalDate[lang]}</span>
+          <span><a href={release.labelUrl} target="_blank" rel="noopener">{release.label}</a> {release.catNum}</span>
+        </p>
+        <div class="actions">
+          <a class="btn btn-main" href={links.smartlink} target="_blank" rel="noopener">{t.listenAll}</a>
+          <a class="btn btn-bandcamp" href={links.bandcamp} target="_blank" rel="noopener">{t.buyBandcamp}</a>
+        </div>
+      </div>
+      <figure class="cover">
+        <img src={release.cover} width="1200" height="1200" alt={`${release.title.join(" ")}, Cover`} />
+        <figcaption>Cover: <a href="https://www.saatchiart.com/danielmfreed" target="_blank" rel="noopener">Daniel Freed</a>, <a href="https://www.saatchiart.com/art/Mixed-Media-Quadrat-Struktur-Dirty-Power/963224/12038459/view" target="_blank" rel="noopener"><i>Quadrat / Struktur (Dirty Power)</i></a>, 2024</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="listen" class="block">
+    <Wire />
+    <h2>{t.listen}</h2>
+    <div class="player" data-album={links.bandcampAlbumId}>
+      <button type="button" class="btn btn-bandcamp" data-load-player>{t.loadPlayer}</button>
+      <p class="note">{t.playerNote}</p>
+    </div>
+    <ul class="stores">
+      {links.stores.map((s) => <li><a href={s.url} target="_blank" rel="noopener">{s.name}</a></li>)}
+    </ul>
+  </section>
+
+  <section id="numbers" class="block">
+    <Wire />
+    <h2>{t.numbers}</h2>
+    <dl class="stats">
+      {stats.items.map((st) => (
+        <div><dt>{st.label[lang]}{st.sub && <small>{st.sub[lang]}</small>}</dt><dd>{st.value}</dd></div>
+      ))}
+    </dl>
+    <p class="note">{t.asOf}: {stats.asOf[lang]}</p>
+  </section>
+
+  <section id="about" class="block">
+    <Wire />
+    <h2>{t.about}</h2>
+    <div class="prose teaser" id="about-text">
+      {text.bio[lang].map((p) => <p set:html={em(p)} />)}
+    </div>
+    <button type="button" class="more-btn" aria-controls="about-text" aria-expanded="false" data-teaser data-less={t.showLess}>{t.readMore}</button>
+    {text.rfo.length > 0 && <p class="rfo">{t.rfo}: {text.rfo.join(", ")}</p>}
+  </section>
+
+  <section id="release" class="block">
+    <Wire />
+    <h2>{t.release}</h2>
+    <div class="release-grid">
+      <div class="sides">
+        {[["a", t.sideA], ["b", t.sideB]].map(([side, label]) => (
+          <div class="side">
+            <h3>{label}</h3>
+            <ol>
+              {tracks[side as "a" | "b"].map((tr) => (
+                <li>
+                  <span class="tt">{tr.title}{"solo" in tr && <small> ({t.soloNote})</small>}</span>
+                  <span class="dur">{tr.duration}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))}
+      </div>
+      <div class="meta">
+        <h3>{t.credits}</h3>
+        <dl>
+          <dt>{t.artists}</dt><dd>{release.artists.join(", ")}</dd>
+          {credits.map((c) => (
+            <>
+              <dt>{c.role[lang]}</dt>
+              <dd>{c.url ? <a href={c.url} target="_blank" rel="noopener">{c.name}</a> : c.name}</dd>
+            </>
+          ))}
+          <dt>Label</dt><dd><a href={release.labelUrl} target="_blank" rel="noopener">{release.label}</a> {release.labelCode}</dd>
+          <dt>UPC</dt><dd>{release.upc}</dd>
+        </dl>
+        <h3>{t.formats}</h3>
+        <ul class="plain">{formats[lang].map((f) => (
+          <li>{f.startsWith("Download:") ? (
+            <>Download: {links.downloads.map((d, i) => (<>{i > 0 && ", "}<a href={d.url} target="_blank" rel="noopener">{d.name}</a></>))}</>
+          ) : f}</li>
+        ))}</ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="owldom" class="block">
+    <Wire />
+    <h2>{t.artist}</h2>
+    <div class="short-bio-row">
+      <div class="prose short-bio">
+        <h3>{t.shortBio}</h3>
+        <p class="aka">{text.owldomShort.aka}</p>
+        <p>{text.owldomShort[lang]}</p>
+      </div>
+      <img class="logo" src="/img/logo-zeitmasz.png" width="600" height="600" alt="Zeitmasz Logo" loading="lazy" />
+    </div>
+    <details class="more" data-collapse>
+      <summary><span class="when-closed">{t.readBio}</span><span class="when-open">{t.showLess}</span></summary>
+      <h3>{t.longBio}</h3>
+      <div class="prose cols">
+        {text.owldom[lang].map((p) => <p>{p}</p>)}
+      </div>
+    </details>
+  </section>
+
+  <section id="sensational" class="block">
+    <Wire />
+    <h2>{t.memory}</h2>
+    <div class="prose short-bio">
+      <h3>{t.shortBio}</h3>
+      <p class="aka">{text.sensationalShort.aka}</p>
+      <p>{text.sensationalShort[lang]}</p>
+    </div>
+    <details class="more" data-collapse>
+      <summary><span class="when-closed">{t.readBio}</span><span class="when-open">{t.showLess}</span></summary>
+      <h3>{t.longBio}</h3>
+      <div class="prose cols">
+        {text.sensational[lang].map((p) => <p set:html={em(p)} />)}
+      </div>
+    </details>
+  </section>
+
+  <section id="photos" class="block">
+    <Wire />
+    <h2>{t.photos}</h2>
+    {photos.length === 0 ? <p class="note">{t.noPhotos}</p> : (["owldom", "sensational"] as const).map((g) => (
+      photos.some((p) => p.group === g) && (
+        <div class="photo-group">
+          <h3>{g === "owldom" ? "Owldom" : "Sensational"}</h3>
+          <ul class="photos teaser-photos" id={`photos-${g}`}>
+            {photos.filter((p) => p.group === g).map((p) => (
+              <li>
+                <figure>
+                  <img src={`/img/press/${p.file}`} alt={p.alt[lang]} loading="lazy" />
+                  <figcaption>
+                    <span>{p.credit[lang]}</span>
+                    <a href={p.full ?? `/img/press/${p.file}`} download>{t.download}</a>
+                  </figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+          {photos.filter((p) => p.group === g).length > 2 && (
+            <button type="button" class="more-btn photos-btn" aria-controls={`photos-${g}`} aria-expanded="false" data-teaser data-less={t.showLess}>{t.allPhotos}</button>
+          )}
+        </div>
+      )
+    ))}
+  </section>
+
+  <section id="presskit" class="block">
+    <Wire />
+    <h2>{t.presskit}</h2>
+    <div class="prose usage">{t.usage.map((u) => <p>{u}</p>)}</div>
+    <a class="btn btn-main" href={presskit.zip} download>{t.zip}</a>
+    <details class="more files-more">
+      <summary><span class="when-closed">{t.singleFiles}</span><span class="when-open">{t.showLess}</span></summary>
+      <ul class="files">
+        {presskit.files.map((f) => <li><a href={f.href} download>{f.name[lang]}</a></li>)}
+      </ul>
+    </details>
+  </section>
+
+  <section id="support" class="block">
+    <Wire />
+    <h2>{t.support}</h2>
+    <p class="lede"><em>{t.supportSlogan}</em><br />{t.supportText}</p>
+    <a class="btn btn-main" href={links.support} target="_blank" rel="noopener">{t.supportBtn}</a>
+  </section>
+
+  <section id="contact" class="block">
+    <Wire />
+    <h2>{t.contact}</h2>
+    <dl class="contact">
+      <dt>{t.press}</dt><dd><a href={`mailto:${contact.press}`}>{contact.press}</a></dd>
+      <dt>{t.booking}</dt><dd><a href={`mailto:${contact.booking}`}>{contact.booking}</a></dd>
+    </dl>
+    <ul class="stores">
+      {links.social.map((s) => <li><a href={s.url} target="_blank" rel="noopener">{s.name}</a></li>)}
+    </ul>
+  </section>
+</main>
+
+<footer class="foot">
+  <a href={`${legal}/impressum/`}>{t.imprint}</a>
+  <a href={`${legal}/datenschutz/`}>{t.privacy}</a>
+</footer>
+
+<script>
+  // Lange Texte: auf breiten Bildschirmen immer offen, auf dem Handy eingeklappt
+  const wide = window.matchMedia("(min-width: 821px)");
+  const syncDetails = () => document.querySelectorAll<HTMLDetailsElement>("details[data-collapse]").forEach((d) => { d.open = wide.matches; });
+  syncDetails();
+  wide.addEventListener("change", syncDetails);
+  document.querySelectorAll<HTMLButtonElement>("[data-teaser]").forEach((b) => {
+    b.addEventListener("click", () => {
+      const box = document.getElementById(b.getAttribute("aria-controls") || "");
+      const open = !box?.classList.contains("expanded");
+      box?.classList.toggle("expanded", open);
+      b.setAttribute("aria-expanded", String(open));
+      if (!b.dataset.more) b.dataset.more = b.textContent || "";
+      b.textContent = open ? (b.dataset.less || "") : b.dataset.more;
+    });
+  });
+  document.querySelectorAll<HTMLButtonElement>("[data-load-player]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const box = btn.closest<HTMLElement>(".player");
+      const id = box?.dataset.album;
+      if (!box || !id) return;
+      const f = document.createElement("iframe");
+      f.title = "Bandcamp";
+      f.src = `https://bandcamp.com/EmbeddedPlayer/album=${id}/size=large/bgcol=161c01/linkcol=e0a95b/artwork=small/transparent=true/`;
+      f.setAttribute("seamless", "");
+      box.replaceChildren(f);
+    });
+  });
+</script>
