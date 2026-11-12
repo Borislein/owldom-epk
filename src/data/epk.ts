@@ -188,7 +188,7 @@ export const photos: { file: string; full?: string; alt: T; credit: T; group: "o
 ];
 
 export const presskit = {
-  zip: "/presskit/Owldom_Twilight-Zone_EPK.zip",
+  zip: "/presskit/Owldom_Meets_Sensational_In_The_Twilight_Zone_EPK.zip",
   files: [
     { name: { en: "Press text album, English (PDF)", de: "Pressetext Album Englisch (PDF)" } as T, href: "/presskit/Owldom_Meets_Sensational_Pressetext_EN.pdf" },
     { name: { en: "Press text album, German (PDF)", de: "Pressetext Album Deutsch (PDF)" } as T, href: "/presskit/Owldom_Meets_Sensational_Pressetext_DE.pdf" },
