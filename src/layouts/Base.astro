@@ -22,6 +22,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={new URL("/img/cover.jpg", Astro.site)} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script is:inline defer src="https://cloud.umami.is/script.js" data-website-id="7383202c-2afe-479d-8d80-a55317db6580"></script>
     <meta name="theme-color" content="#161c01" />
   </head>
   <body>

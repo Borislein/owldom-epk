@@ -134,7 +134,7 @@ const em = (x: string) => x.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace
         <p class="aka">{text.owldomShort.aka}</p>
         <p>{text.owldomShort[lang]}</p>
       </div>
-      <img class="logo" src="/img/logo-zeitmasz.png" width="600" height="600" alt="Zeitmasz Logo" loading="lazy" />
+      <a class="logo-link" href={release.labelUrl} target="_blank" rel="noopener" aria-label="Zeitmasz"><img class="logo" src="/img/logo-zeitmasz.png" width="600" height="600" alt="Zeitmasz Logo" loading="lazy" /></a>
     </div>
     <details class="more" data-collapse>
       <summary><span class="when-closed">{t.readBio}</span><span class="when-open">{t.showLess}</span></summary>
@@ -142,6 +142,7 @@ const em = (x: string) => x.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace
       <div class="prose cols">
         {text.owldom[lang].map((p) => <p>{p}</p>)}
       </div>
+      <button type="button" class="more-btn less-btn" data-close-details>{t.showLess}</button>
     </details>
   </section>
 
@@ -159,6 +160,7 @@ const em = (x: string) => x.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace
       <div class="prose cols">
         {text.sensational[lang].map((p) => <p set:html={em(p)} />)}
       </div>
+      <button type="button" class="more-btn less-btn" data-close-details>{t.showLess}</button>
     </details>
   </section>
 
@@ -242,6 +244,15 @@ const em = (x: string) => x.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace
       b.setAttribute("aria-expanded", String(open));
       if (!b.dataset.more) b.dataset.more = b.textContent || "";
       b.textContent = open ? (b.dataset.less || "") : b.dataset.more;
+    });
+  });
+  // "Weniger anzeigen" unter dem aufgeklappten Text: klappt zu und springt zurück zum Anfang
+  document.querySelectorAll<HTMLButtonElement>("[data-close-details]").forEach((b) => {
+    b.addEventListener("click", () => {
+      const d = b.closest("details");
+      if (!d) return;
+      d.open = false;
+      d.closest("section")?.scrollIntoView({ block: "start" });
     });
   });
   document.querySelectorAll<HTMLButtonElement>("[data-load-player]").forEach((btn) => {
